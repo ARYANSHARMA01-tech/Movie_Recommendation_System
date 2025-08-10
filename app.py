@@ -19,6 +19,37 @@ def fetch_poster(movie_id):
     except:
         return "https://via.placeholder.com/500x750?text=No+Image"
 
+# Fetch detailed movie info from TMDB
+def fetch_movie_details(movie_id):
+    try:
+        url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={API_KEY}&language=en-US&append_to_response=credits"
+        response = requests.get(url)
+        data = response.json()
+        
+        title = data.get('title', 'Unknown Title')
+        release_date = data.get('release_date', 'Unknown')
+        genres = ', '.join([g['name'] for g in data.get('genres', [])])
+        overview = data.get('overview', 'No overview available.')
+        
+        cast = data.get('credits', {}).get('cast', [])
+        actors = ', '.join([actor['name'] for actor in cast[:5]]) if cast else "No cast info."
+        
+        return {
+            'title': title,
+            'release_date': release_date,
+            'genres': genres,
+            'overview': overview,
+            'actors': actors
+        }
+    except:
+        return {
+            'title': 'Unknown',
+            'release_date': 'Unknown',
+            'genres': 'Unknown',
+            'overview': 'No overview available.',
+            'actors': 'No cast info.'
+        }
+
 # Recommend similar movies
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
@@ -48,9 +79,24 @@ st.markdown("---")
 st.sidebar.header("📽️ Choose a Movie")
 selected_movie = st.sidebar.selectbox("Select a movie you like:", movies['title'].values)
 
-# Recommendation button
+# Recommendation button and movie details
 if st.sidebar.button("🎯 Recommend"):
     names, posters = recommend(selected_movie)
+    
+    # Fetch movie details
+    selected_movie_id = movies[movies['title'] == selected_movie].iloc[0].movie_id
+    details = fetch_movie_details(selected_movie_id)
+    
+    # Display movie info below the button
+    st.sidebar.markdown(f"""
+    ### 🎬 About **{details['title']}**
+    **Actors:** {details['actors']}  
+    **Release Date:** {details['release_date']}  
+    **Genres:** {details['genres']}  
+    **Plot:** {details['overview']}
+    """)
+
+    # Display recommendations in main page
     st.markdown(f"<h3 style='text-align: center;'>Top 5 movies recommended for <span style='color:#ff4b4b;'>{selected_movie}</span>:</h3>", unsafe_allow_html=True)
     st.write("")
 
