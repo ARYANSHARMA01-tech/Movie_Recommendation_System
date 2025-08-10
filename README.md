@@ -38,8 +38,8 @@ Follow these instructions to set up and run the project on your local machine.
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git](https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git)
-    cd YOUR_REPOSITORY_NAME
+    git clone https://github.com/ARYANSHARMA01-tech/Movie_Recommendation_System
+    cd Movie_Recommendation_System
     ```
 
 2.  **Create and activate a virtual environment (recommended):**
